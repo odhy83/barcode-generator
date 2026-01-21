@@ -1,0 +1,32 @@
+
+name: Build Windows EXE
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller PyPDF2 reportlab
+
+      - name: Build EXE
+        run: |
+          pyinstaller --onefile --noconsole barcode_generator.py
+
+      - name: Upload EXE to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/barcode_generator.exe
